@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+    <span id="algoStatus"> waiting </span>
+
+    <br>
+
+    <button id="connect"> connect </button>
+
+    <script>
+        $().ready(
+            () => {
+
+                if (typeof AlgoSigner !== 'undefined') {
+                    $("#algoStatus").text('AlgoSigner is installed.');
+                    $("#connect").click(() => {
+                        AlgoSigner.connect()
+                            .then((d) => {
+                                $("#algoStatus").text('AlgoSigner is Connected.');
+                            })
+                            .catch((e) => {
+                                console.error(e);
+                                $("#algoStatus").text(JSON.stringify(e, null, 2));
+                            })
+                            .finally(() => {
+                              
+                            });
+                    });
+
+
+                } else {
+                    $("#algoStatus").text('AlgoSigner is NOT installed.');
+                    $("#connect").hide()
+                }
+
+
+
+            }
+
+
+        )
+    </script>
+</body>
+
+</html>
