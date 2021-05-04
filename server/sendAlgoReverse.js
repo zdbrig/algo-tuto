@@ -2,15 +2,13 @@ const algosdk = require('algosdk');
 const fs = require("fs");
 const algodServer = "https://mainnet-algorand.api.purestake.io/ps2";
 const port = "";
-const token = {
-    'X-API-Key': "yourKey"
-};
 
 
 
 let sendAlgo = async () => {
 
     let bacemPass = await fs.readFileSync(".jawaher").toString("ascii");
+    let token = require("./apikey");
     const passphrase = bacemPass;
 
     let myAccount = algosdk.mnemonicToSecretKey(passphrase)

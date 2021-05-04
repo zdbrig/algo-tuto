@@ -13,41 +13,81 @@
     <span id="algoStatus"> waiting </span>
 
     <br>
-
+    <button id="check"> checkStatus </button>
     <button id="connect"> connect </button>
+    <button id="pay"> Pay </button>
 
     <script>
-        $().ready(
-            () => {
+        $("#connect").hide();
+        $("#pay").hide();
+        $("#check").click(() => {
+            if (typeof AlgoSigner !== 'undefined') {
+                $("#algoStatus").text('AlgoSigner is installed.');
+                $("#connect").show();
+                $("#check").hide();
+                $("#connect").click(() => {
+                    AlgoSigner.connect()
+                        .then((d) => {
+                            $("#algoStatus").text('AlgoSigner is Connected.');
+                            $("#connect").hide();
+                            $("#check").hide();
 
-                if (typeof AlgoSigner !== 'undefined') {
-                    $("#algoStatus").text('AlgoSigner is installed.');
-                    $("#connect").click(() => {
-                        AlgoSigner.connect()
-                            .then((d) => {
-                                $("#algoStatus").text('AlgoSigner is Connected.');
-                            })
-                            .catch((e) => {
-                                console.error(e);
-                                $("#algoStatus").text(JSON.stringify(e, null, 2));
-                            })
-                            .finally(() => {
-                              
-                            });
-                    });
+                            AlgoSigner.accounts({
+                                    ledger: 'MainNet'
+                                })
+                                .then((d) => {
+                                    $("#algoStatus").text(JSON.stringify(d, null, 2));
+                                    tnAccounts = d;
+                                    $("#pay").show();
+                                    $("#pay").click(() => {
+                                        let txn = {
+                                            type: 'pay',
+                                            from: account.address,
+                                            to: "DBUROLMFOUFDB22KZP7SBFAQXUFU7WWRG3DFOPLCYPBKWOKURS336LUZJ4",
+                                            fee: txParams['fee'],
+                                            firstRound: txParams['last-round'],
+                                            lastRound: txParams['last-round'] + 1000,
+                                            genesisID: txParams['genesis-id'],
+                                            genesisHash: txParams['genesis-hash'],
+
+                                            amount: amount
+                                        };
+
+                                        AlgoSigner.sign(txn);
+                                    });
 
 
-                } else {
-                    $("#algoStatus").text('AlgoSigner is NOT installed.');
-                    $("#connect").hide()
-                }
+                                    // Append accounts to account select
+                                    /*  let select = document.getElementById('from');
+                                      select.textContent = '';
+                                      for (var i = d.length - 1; i >= 0; i--) {
+                                          let option = document.createElement('option');
+                                          option.text = d[i].address;
+                                          option.value = d[i].address;
+                                          select.appendChild(option);
+                                      }*/
+                                })
+                                .catch((e) => {
+                                    console.error(e);
+                                })
+                                .finally(() => {});
+                        })
+                        .catch((e) => {
+                            console.error(e);
+                            $("#algoStatus").text(JSON.stringify(e, null, 2));
+                        })
+                        .finally(() => {
+
+                        });
+                });
 
 
-
+            } else {
+                $("#algoStatus").text('AlgoSigner is NOT installed.');
+                $("#connect").hide()
             }
 
-
-        )
+        })
     </script>
 </body>
 
